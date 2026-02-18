@@ -1,0 +1,41 @@
+seed: 42
+output_prefix: ""
+model_path_out: null
+
+data:
+  dataset_path: null
+
+model:
+  base_model: "HuggingFaceTB/SmolLM2-135M"
+
+training:
+  stage1:
+    epochs: 20
+    lr: 5e-5
+    warmup_ratio: 0.1
+  stage2:
+    epochs: 1000
+    lr: 1e-5
+    warmup_steps: 1000
+  batch_size: 60
+  weight_decay: 0.01
+  grad_clip: 1.0
+  beta1: 0.9
+  beta2: 0.99
+  amp: false
+  loss_type: "mse"
+  huber_delta: 1.0 # only when loss_type == "huber"
+
+logging:
+  log: true
+  log_dir: "runs"
+  log_steps: 10
+  wandb_log: true
+  wandb_project: "NCPL"
+  eval_steps: 500
+  log_without_bf16: false
+  save_steps: 500
+  log_intermediate_ckpt: false
+
+ddp:
+  backend: 'nccl'  # Distributed backend
