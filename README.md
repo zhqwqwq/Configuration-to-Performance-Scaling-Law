@@ -94,7 +94,7 @@ scripts/model_generation_final_hf.sh
 ```bash
 scripts/model_generation_intermediate_hf.sh
 ```
-The evaluation requires 1 GPU.
+The evaluation requires 1 GPU. The results vary slightly across different trainig runs and hardware.
 
 ## Links
 

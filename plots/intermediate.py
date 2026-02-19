@@ -13,13 +13,10 @@ import pandas as pd
 
 # ===================== paths =====================
 
-# repo layout you described:
-# NCPL-intermediate/eval/results.json
-DEFAULT_RESULTS_JSON = Path("NCPL-intermediate") / "eval" / "results.json"
+DEFAULT_RESULTS_JSON = Path("") # Fill in model path here, e.g. "NCPL-intermediate/eval/results.json"
 
 PLOTS_DIR = Path(__file__).resolve().parent
 
-# ===================== global style =====================
 plt.rcParams["font.family"] = "serif"
 plt.rcParams["font.serif"] = ["STIXGeneral"]
 plt.rcParams["mathtext.fontset"] = "stix"
@@ -34,7 +31,6 @@ plt.rcParams.update(
     }
 )
 
-# ===================== markers / styles =====================
 GT_MARKER = "o"
 PRED_MARKER = "^"
 GT_LS = "-"
@@ -42,7 +38,6 @@ PRED_LS = "--"
 
 COLORS = ["#EB7373", "#8C6BB1", "#E8A35C", "#3C9D9B", "#7FB800", "#FF7F00", "#6A5ACD"]
 
-# Run name contains token budget like "...-24B-..."
 TOKEN_RE = re.compile(r"-(\d+(?:\.\d+)?)B-")
 
 
@@ -57,7 +52,6 @@ SplitName = Literal["train_eval", "in_eval", "ood_eval"]
 
 
 def _extract_first(x: Any) -> float | None:
-    """Extract a single float from a list-like field. Returns None if unavailable."""
     if x is None:
         return None
     if isinstance(x, (int, float)):
@@ -110,12 +104,8 @@ def build_split_df(
 
         true_v = _extract_first(label_seqs.get(metric_key))
         pred_v = _extract_first(pred_seqs.get(metric_key))
-        if true_v == None:
+        if true_v == None: # final loss prediction
             continue
-            # breakpoint()
-
-        # keep rows even if some values are None; plotting will skip if missing
-        # breakpoint()
         chinchilla = it["chinchilla"]
         rows.append(
             {
@@ -127,8 +117,6 @@ def build_split_df(
         )
 
     df = pd.DataFrame(rows)
-
-    # basic cleanup
     df = df.dropna(subset=["name", "ratio"])
     df["ratio"] = df["ratio"].astype(float)
 
@@ -148,12 +136,10 @@ def plot_multiple_runs(
 
     for opt_name, run_name in names_list:
         subset = data[data["name"] == run_name].copy()
-        # breakpoint()
         if subset.empty:
             print(f"[warn] No entries found for name: {run_name}")
             continue
 
-        # Ensure numeric + sorted by ratio
         subset = subset.sort_values("ratio")
         subset = subset.dropna(subset=["true_train_loss", "pred_train_loss"])
 
